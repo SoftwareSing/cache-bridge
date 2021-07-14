@@ -1,12 +1,6 @@
-const LRU = require('lru-cache')
 const CacheClient = require('../../lib/CacheClient')
 const { shuffle } = require('./shuffle')
-
-const lru = new LRU({
-  max: 100 * 1000 * 1000,
-  length: (value, key) => value.length + key.length,
-  maxAge: 60 * 1000
-})
+const { lru } = require('./lru')
 
 // type checking is just for test
 // if you are looking for an example for CacheClient, it's not necessary to do type checking on your implement
@@ -32,7 +26,8 @@ module.exports = class LruCacheClient extends CacheClient {
     // it's just for test
     keyList = shuffle(new Set(keyList))
 
-    return keyList.map((key) => [key, this.get(key)])
+    const promiseList = keyList.map(async (key) => [key, await this.get(key)])
+    return await Promise.all(promiseList)
   }
 
   /**
@@ -50,9 +45,7 @@ module.exports = class LruCacheClient extends CacheClient {
   async delMany (keyList) {
     checkIsArray(keyList, 'keyList')
 
-    for (const key of keyList) {
-      this.del(key)
-    }
+    await Promise.all(keyList.map((key) => this.del(key)))
   }
 
   /**
@@ -75,9 +68,11 @@ module.exports = class LruCacheClient extends CacheClient {
   async setMany (keyTextMap, ttl) {
     checkIsMap(keyTextMap, 'keyTextMap')
 
+    const promiseList = []
     for (const [key, text] of keyTextMap.entries()) {
-      this.set(key, text, ttl)
+      promiseList.push(this.set(key, text, ttl))
     }
+    await Promise.all(promiseList)
   }
 
   /**

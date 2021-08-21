@@ -17,7 +17,7 @@ describe('Cache', function () {
     lruClient = new LruCacheClient()
     cacheOptions = {
       prefix: faker.lorem.word(),
-      ttl: faker.datatype.number({ min: 10, max: 100 })
+      ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })
     }
     cache = new Cache(lruClient, cacheOptions)
   })
@@ -38,7 +38,7 @@ describe('Cache', function () {
       id = faker.datatype.uuid()
       data = getRandomData({ undefined: false })
       data = cache.parse(cache.stringify(data))
-      await lruClient.set(cache.key(id), cache.stringify(data), 100)
+      await lruClient.set(cache.key(id), cache.stringify(data), 100 * 1000)
     })
 
     it('should return data', async function () {
@@ -67,7 +67,7 @@ describe('Cache', function () {
         idDataMap.set(id, cache.parse(cache.stringify(data)))
         keyTextMap.set(cache.key(id), cache.stringify(data))
       }
-      await lruClient.setMany(keyTextMap, 100)
+      await lruClient.setMany(keyTextMap, 100 * 1000)
     })
 
     it('should return data map', async function () {
@@ -88,7 +88,7 @@ describe('Cache', function () {
       id = faker.datatype.uuid()
       data = getRandomData({ undefined: false })
       data = cache.parse(cache.stringify(data))
-      await lruClient.set(cache.key(id), cache.stringify(data), 100)
+      await lruClient.set(cache.key(id), cache.stringify(data), 100 * 1000)
     })
 
     it('should not found data after del()', async function () {
@@ -122,7 +122,7 @@ describe('Cache', function () {
         idDataMap.set(id, cache.parse(cache.stringify(data)))
         keyTextMap.set(cache.key(id), cache.stringify(data))
       }
-      await lruClient.setMany(keyTextMap, 100)
+      await lruClient.setMany(keyTextMap, 100 * 1000)
     })
 
     it('should delete every id in list', async function () {
@@ -155,7 +155,7 @@ describe('Cache', function () {
 
     it('should set data even cache already exist', async function () {
       const fakeData = getRandomData({ undefined: false, null: false, [typeof data]: false })
-      await lruClient.set(cache.key(id), cache.stringify(fakeData), 100)
+      await lruClient.set(cache.key(id), cache.stringify(fakeData), 100 * 1000)
 
       const result = await cache.set(id, data)
       expect(result).to.equal(undefined)
@@ -184,7 +184,7 @@ describe('Cache', function () {
 
     it('should not set data if cache already exist', async function () {
       const fakeData = getRandomData({ undefined: false, null: false, [typeof data]: false })
-      await lruClient.set(cache.key(id), cache.stringify(fakeData), 100)
+      await lruClient.set(cache.key(id), cache.stringify(fakeData), 100 * 1000)
 
       const result = await cache.setNotExist(id, data)
       expect(result).to.equal(false)

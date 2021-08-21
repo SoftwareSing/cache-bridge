@@ -14,7 +14,7 @@ describe('CacheLocker', function () {
     lruClient = new LruCacheClient()
     cache = new Cache(lruClient, {
       prefix: faker.lorem.word(),
-      ttl: faker.datatype.number({ min: 10, max: 100 })
+      ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })
     })
     locker = new CacheLocker(cache)
   })

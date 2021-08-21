@@ -15,12 +15,12 @@ describe('Bridge', function () {
   })
   let cache = new Cache(lruClient, {
     prefix: `cache${faker.lorem.word()}`,
-    ttl: faker.datatype.number({ min: 10, max: 100 })
+    ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })
   })
   let locker = new CacheLocker(
     new Cache(lruClient, {
       prefix: `lock${faker.lorem.word()}`,
-      ttl: 2
+      ttl: 2 * 1000
     })
   )
   let bridge = new Bridge({ cache, locker, db })
@@ -33,12 +33,12 @@ describe('Bridge', function () {
     })
     cache = new Cache(lruClient, {
       prefix: `cache${faker.lorem.word()}`,
-      ttl: faker.datatype.number({ min: 10, max: 100 })
+      ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })
     })
     locker = new CacheLocker(
       new Cache(lruClient, {
         prefix: `lock${faker.lorem.word()}`,
-        ttl: 2
+        ttl: 2 * 1000
       })
     )
     bridge = new Bridge({ cache, locker, db })

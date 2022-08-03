@@ -1,4 +1,4 @@
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 const { expect } = require('chai')
 
 const CacheLocker = require('../../../lib/CacheLocker')
@@ -71,7 +71,7 @@ describe('CacheLocker', function () {
     })
 
     it('should try lock every id even some id already been lock', async function () {
-      const lockId = faker.random.arrayElement(idList)
+      const lockId = faker.helpers.arrayElement(idList)
       const lockFlag = await locker.lock(lockId)
 
       const result = await locker.lockMany(idList.values())
@@ -150,7 +150,7 @@ describe('CacheLocker', function () {
 
     it('should not remove lock if not provide flag', async function () {
       const inputMap = new Map(idFlagMap.entries())
-      const noFlagId = faker.random.arrayElement([...inputMap.keys()])
+      const noFlagId = faker.helpers.arrayElement([...inputMap.keys()])
       inputMap.set(noFlagId, undefined)
 
       const result = await locker.unlockMany(inputMap)
@@ -167,7 +167,7 @@ describe('CacheLocker', function () {
 
     it('should not remove lock if flag not match', async function () {
       const inputMap = new Map(idFlagMap.entries())
-      const wrongFlagId = faker.random.arrayElement([...inputMap.keys()])
+      const wrongFlagId = faker.helpers.arrayElement([...inputMap.keys()])
       inputMap.set(wrongFlagId, faker.datatype.uuid())
 
       const result = await locker.unlockMany(inputMap)

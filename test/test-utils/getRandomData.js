@@ -1,4 +1,4 @@
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 
 const typeList = ['undefined', 'null', 'number', 'boolean', 'string', 'object', 'array']
 
@@ -15,7 +15,7 @@ exports.getRandomData = function getRandomData (typeEnable = {}) {
   })
   if (availableTypeList.length < 1) return undefined
 
-  const type = faker.random.arrayElement(availableTypeList)
+  const type = faker.helpers.arrayElement(availableTypeList)
   switch (type) {
     case 'null': return null
     case 'number': return faker.datatype.number()
@@ -43,7 +43,7 @@ function getRandomArray () {
 }
 
 function getRandomBaseData () {
-  const getFunc = faker.random.arrayElement([
+  const getFunc = faker.helpers.arrayElement([
     faker.datatype.number,
     faker.datatype.boolean,
     faker.lorem.sentence

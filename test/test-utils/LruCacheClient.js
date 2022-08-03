@@ -36,7 +36,7 @@ module.exports = class LruCacheClient extends CacheClient {
   async del (key) {
     checkIsString(key, 'key')
 
-    lru.del(key)
+    lru.delete(key)
   }
 
   /**

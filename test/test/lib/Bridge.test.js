@@ -1,9 +1,9 @@
 const { faker } = require('@faker-js/faker')
 const { expect } = require('chai')
 
-const Bridge = require('../../../lib/Bridge')
-const Cache = require('../../../lib/Cache')
-const CacheLocker = require('../../../lib/CacheLocker')
+const { Bridge } = require('../../../dist/Bridge')
+const { Cache } = require('../../../dist/Cache')
+const { CacheLocker } = require('../../../dist/CacheLocker')
 const LruCacheClient = require('../../test-utils/LruCacheClient')
 const { getRandomData } = require('../../test-utils/getRandomData')
 

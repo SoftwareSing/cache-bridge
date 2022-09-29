@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    "types": ["node"],
+    "outDir": "./dist/"
+  },
   "extends": "@tsconfig/node14/tsconfig.json",
   "include": ["./src/**/*"],
   "exclude": ["./node_modules/**/*"]

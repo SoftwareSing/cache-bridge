@@ -1,8 +1,8 @@
 const { faker } = require('@faker-js/faker')
 const { expect } = require('chai')
 
-const CacheLocker = require('../../../lib/CacheLocker')
-const Cache = require('../../../lib/Cache')
+const { CacheLocker } = require('../../../dist/CacheLocker')
+const { Cache } = require('../../../dist/Cache')
 const LruCacheClient = require('../../test-utils/LruCacheClient')
 
 describe('CacheLocker', function () {

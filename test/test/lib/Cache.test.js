@@ -1,7 +1,7 @@
 const { faker } = require('@faker-js/faker')
 const { expect } = require('chai')
 
-const Cache = require('../../../lib/Cache')
+const { Cache } = require('../../../dist/Cache')
 const LruCacheClient = require('../../test-utils/LruCacheClient')
 const { getRandomData } = require('../../test-utils/getRandomData')
 

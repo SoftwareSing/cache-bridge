@@ -1,10 +1,10 @@
-const CacheClient = require('../../lib/CacheClient')
+// const { CacheClient } = require('../../dist/CacheClient')
 const { shuffle } = require('./shuffle')
 const { lru } = require('./lru')
 
 // type checking is just for test
 // if you are looking for an example for CacheClient, it's not necessary to do type checking on your implement
-module.exports = class LruCacheClient extends CacheClient {
+module.exports = class LruCacheClient {
   /**
    * @param {String} key
    * @returns {Promise<String>}

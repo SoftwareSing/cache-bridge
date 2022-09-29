@@ -8,7 +8,7 @@ export class Bridge implements Store {
   protected readonly locker: Locker
   protected readonly db: Store
 
-  constructor ({ cache, locker, db }: { cache: Cache, locker: Locker, db: Store}) {
+  constructor ({ cache, locker, db }: { cache: Cache, locker: Locker, db: Store }) {
     this.cache = cache
     this.locker = locker
     this.db = db

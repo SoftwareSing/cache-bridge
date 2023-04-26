@@ -1,18 +1,6 @@
 import { Store } from './Store'
 import { CacheClient } from './CacheClient'
-
-type stringify = (value: any) => string
-type parse = (text: string) => any
-
-const defaultStringify: stringify = (value) => {
-  const str = JSON.stringify(value)
-  return str === undefined ? 'undefined' : str
-}
-const defaultParse: parse = (text) => {
-  if (text === undefined) return undefined
-  if (text === 'undefined') return undefined
-  return JSON.parse(text)
-}
+import { stringify, parse, defaultStringify, defaultParse } from './dataConverter'
 
 export class Cache implements Store {
   protected readonly client: CacheClient

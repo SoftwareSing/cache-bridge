@@ -93,8 +93,7 @@ describe('Cache', function () {
     })
 
     it('should not found data after del()', async function () {
-      const result = await cache.del(id)
-      expect(result).to.equal(undefined)
+      await cache.del(id)
 
       const afterDelData = await lruClient.get(cache.key(id))
       expect(afterDelData).to.equal(undefined)
@@ -102,8 +101,7 @@ describe('Cache', function () {
 
     it('should not effect data if delete other id', async function () {
       const otherId = faker.datatype.uuid()
-      const result = await cache.del(otherId)
-      expect(result).to.equal(undefined)
+      await cache.del(otherId)
 
       const afterDelDataText = await lruClient.get(cache.key(id))
       expect(afterDelDataText).to.equal(defaultStringify(data))
@@ -127,8 +125,7 @@ describe('Cache', function () {
     })
 
     it('should delete every id in list', async function () {
-      const result = await cache.delMany(idDataMap.keys())
-      expect(result).to.equal(undefined)
+      await cache.delMany(idDataMap.keys())
 
       const afterDelTextList = await lruClient.getMany([...idDataMap.keys()])
       for (const [, text] of afterDelTextList) {
@@ -147,8 +144,7 @@ describe('Cache', function () {
     })
 
     it('should set data to cache', async function () {
-      const result = await cache.set(id, data)
-      expect(result).to.equal(undefined)
+      await cache.set(id, data)
 
       const afterSetCache = await lruClient.get(cache.key(id))
       expect(afterSetCache).to.equal(defaultStringify(data))
@@ -158,8 +154,7 @@ describe('Cache', function () {
       const fakeData = getRandomData({ undefined: false, null: false, [typeof data]: false })
       await lruClient.set(cache.key(id), defaultStringify(fakeData), 100 * 1000)
 
-      const result = await cache.set(id, data)
-      expect(result).to.equal(undefined)
+      await cache.set(id, data)
 
       const afterSetCache = await lruClient.get(cache.key(id))
       expect(afterSetCache).to.equal(defaultStringify(data))
@@ -209,8 +204,7 @@ describe('Cache', function () {
     })
 
     it('should set every data to cache', async function () {
-      const result = await cache.setMany(idDataMap.entries())
-      expect(result).to.equal(undefined)
+      await cache.setMany(idDataMap.entries())
 
       const keyList = [...idDataMap.keys()].map((id) => cache.key(id))
       const afterSetCacheList = await lruClient.getMany(keyList)

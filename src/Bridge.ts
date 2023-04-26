@@ -1,7 +1,7 @@
-import { Store } from './Store'
+import { type Store } from './Store'
 import { sleep } from './sleep'
-import { Cache } from './Cache'
-import { Locker } from './Locker'
+import { type Cache } from './Cache'
+import { type Locker } from './Locker'
 
 export class Bridge implements Store {
   protected readonly cache: Cache

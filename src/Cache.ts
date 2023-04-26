@@ -1,6 +1,6 @@
-import { Store } from './Store'
-import { CacheClient } from './CacheClient'
-import { stringify, parse, defaultStringify, defaultParse } from './dataConverter'
+import { type Store } from './Store'
+import { type CacheClient } from './CacheClient'
+import { type stringify, type parse, defaultStringify, defaultParse } from './dataConverter'
 
 export class Cache implements Store {
   protected readonly client: CacheClient
@@ -48,7 +48,7 @@ export class Cache implements Store {
   }
 
   async getMany (idList: Iterable<string>): Promise<Map<string, any>> {
-    const keyIdMap: Map<string, string> = new Map()
+    const keyIdMap = new Map<string, string>()
     for (const id of idList) {
       keyIdMap.set(this.key(id), id)
     }
@@ -63,7 +63,7 @@ export class Cache implements Store {
   }
 
   async del (id: string): Promise<void> {
-    return await this.client.del(this.key(id))
+    await this.client.del(this.key(id))
   }
 
   async delMany (idList: Iterable<string>): Promise<void> {
@@ -71,7 +71,7 @@ export class Cache implements Store {
     for (const id of idList) {
       keyArray.push(this.key(id))
     }
-    return await this.client.delMany(keyArray)
+    await this.client.delMany(keyArray)
   }
 
   async set (id: string, data: any, ttl?: number): Promise<void> {
@@ -80,7 +80,7 @@ export class Cache implements Store {
       ttl = data === undefined ? this.ttlForUndefined : this.ttl
     }
 
-    return await this.client.set(this.key(id), this.stringify(data), ttl)
+    await this.client.set(this.key(id), this.stringify(data), ttl)
   }
 
   async setNotExist (id: string, data: any, ttl?: number): Promise<boolean> {

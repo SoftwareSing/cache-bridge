@@ -101,8 +101,7 @@ describe('CacheLocker', function () {
     })
 
     it('should remove lock', async function () {
-      const result = await locker.unlock(id, flag)
-      expect(result).to.equal(undefined)
+      await locker.unlock(id, flag)
 
       const flagInCache = await cache.get(id)
       expect(flagInCache).to.equal(undefined)
@@ -110,8 +109,7 @@ describe('CacheLocker', function () {
 
     it('should not remove lock if flag not match', async function () {
       const fakeFlag = faker.datatype.uuid()
-      const result = await locker.unlock(id, fakeFlag)
-      expect(result).to.equal(undefined)
+      await locker.unlock(id, fakeFlag)
 
       const flagInCache = await cache.get(id)
       expect(flagInCache).to.equal(flag)
@@ -131,8 +129,7 @@ describe('CacheLocker', function () {
     })
 
     it('should remove all target lock', async function () {
-      const result = await locker.unlockMany(new Map(idFlagMap.entries()))
-      expect(result).to.equal(undefined)
+      await locker.unlockMany(new Map(idFlagMap.entries()))
 
       const flagInCacheMap = await cache.getMany(idFlagMap.keys())
       for (const id of idFlagMap.keys()) {
@@ -145,8 +142,7 @@ describe('CacheLocker', function () {
       const wrongFlagId = faker.helpers.arrayElement([...inputMap.keys()])
       inputMap.set(wrongFlagId, faker.datatype.uuid())
 
-      const result = await locker.unlockMany(inputMap)
-      expect(result).to.equal(undefined)
+      await locker.unlockMany(inputMap)
 
       expect(await cache.get(wrongFlagId)).to.equal(idFlagMap.get(wrongFlagId))
 

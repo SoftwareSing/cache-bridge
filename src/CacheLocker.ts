@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Locker } from './Locker'
-import { Cache } from './Cache'
+import { type Locker } from './Locker'
+import { type Cache } from './Cache'
 
 export class CacheLocker implements Locker {
   protected readonly cache: Cache

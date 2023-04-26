@@ -1,4 +1,4 @@
-import { CacheClient } from '../../src/CacheClient'
+import { type CacheClient } from '../../src/CacheClient'
 import { lru } from './lru'
 import { shuffle } from './shuffle'
 
@@ -26,7 +26,7 @@ export class LruCacheClient implements CacheClient {
   }
 
   async delMany (keyList: string[]): Promise<void> {
-    await Promise.all(keyList.map(async (key) => await this.del(key)))
+    await Promise.all(keyList.map(async (key) => { await this.del(key) }))
   }
 
   async set (key: string, text: string, ttl: number): Promise<void> {

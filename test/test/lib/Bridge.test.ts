@@ -1,11 +1,11 @@
-const { faker } = require('@faker-js/faker')
-const { expect } = require('chai')
+import { faker } from '@faker-js/faker'
+import { expect } from 'chai'
 
-const { Bridge } = require('../../../dist/Bridge')
-const { Cache } = require('../../../dist/Cache')
-const { CacheLocker } = require('../../../dist/CacheLocker')
-const LruCacheClient = require('../../test-utils/LruCacheClient')
-const { getRandomData } = require('../../test-utils/getRandomData')
+import { Bridge } from '../../../src/Bridge'
+import { Cache } from '../../../src/Cache'
+import { CacheLocker } from '../../../src/CacheLocker'
+import { LruCacheClient } from '../../test-utils/LruCacheClient'
+import { getRandomData } from '../../test-utils/getRandomData'
 
 describe('Bridge', function () {
   let lruClient = new LruCacheClient()

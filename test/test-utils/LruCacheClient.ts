@@ -4,7 +4,7 @@ import { shuffle } from './shuffle'
 
 export class LruCacheClient implements CacheClient {
   async get (key: string): Promise<string | undefined> {
-    return await lru.get(key)
+    return lru.get(key)
   }
 
   /**

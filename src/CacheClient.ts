@@ -1,10 +1,10 @@
 export interface CacheClient {
-  get: (key: string) => Promise<string>
+  get: (key: string) => Promise<string | undefined>
 
   /**
    * @returns [ [key, value], [key, value], [key, value] ]
    */
-  getMany: (keyList: string[]) => Promise<Iterable<[string, string]>>
+  getMany: (keyList: string[]) => Promise<Iterable<[string, string | undefined]>>
 
   del: (key: string) => Promise<void>
 

@@ -4,11 +4,11 @@ import { expect } from 'chai'
 import { Bridge } from '../../../src/Bridge'
 import { Cache } from '../../../src/Cache'
 import { CacheLocker } from '../../../src/CacheLocker'
-import { LruCacheClient } from '../../test-utils/LruCacheClient'
+import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
 import { getRandomData } from '../../test-utils/getRandomData'
 
 describe('Bridge', function () {
-  let lruClient = new LruCacheClient()
+  let lruClient = new TestLruCacheClient()
   let db = new Cache(lruClient, {
     prefix: `db${faker.lorem.word()}`,
     ttl: Infinity
@@ -26,7 +26,7 @@ describe('Bridge', function () {
   let bridge = new Bridge({ cache, locker, db })
 
   beforeEach(function () {
-    lruClient = new LruCacheClient()
+    lruClient = new TestLruCacheClient()
     db = new Cache(lruClient, {
       prefix: `db${faker.lorem.word()}`,
       ttl: Infinity

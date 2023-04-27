@@ -3,11 +3,11 @@ import { expect } from 'chai'
 
 import { Cache } from '../../../src/Cache'
 import { defaultStringify, defaultParse } from '../../../src/dataConverter'
-import { LruCacheClient } from '../../test-utils/LruCacheClient'
+import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
 import { getRandomData } from '../../test-utils/getRandomData'
 
 describe('Cache', function () {
-  let lruClient = new LruCacheClient()
+  let lruClient = new TestLruCacheClient()
   let cacheOptions = {
     prefix: '',
     ttl: 1
@@ -15,7 +15,7 @@ describe('Cache', function () {
   let cache = new Cache(lruClient, cacheOptions)
 
   beforeEach(function () {
-    lruClient = new LruCacheClient()
+    lruClient = new TestLruCacheClient()
     cacheOptions = {
       prefix: faker.lorem.word(),
       ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })

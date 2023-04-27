@@ -3,15 +3,15 @@ import { expect } from 'chai'
 
 import { CacheLocker } from '../../../src/CacheLocker'
 import { Cache } from '../../../src/Cache'
-import { LruCacheClient } from '../../test-utils/LruCacheClient'
+import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
 
 describe('CacheLocker', function () {
-  let lruClient = new LruCacheClient()
+  let lruClient = new TestLruCacheClient()
   let cache = new Cache(lruClient, { prefix: '', ttl: 1 })
   let locker = new CacheLocker(cache)
 
   beforeEach(function () {
-    lruClient = new LruCacheClient()
+    lruClient = new TestLruCacheClient()
     cache = new Cache(lruClient, {
       prefix: faker.lorem.word(),
       ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })

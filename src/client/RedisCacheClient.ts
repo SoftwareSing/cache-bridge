@@ -3,14 +3,24 @@ import { type CacheClient } from '../CacheClient'
 export class RedisCacheClient implements CacheClient {
   protected readonly redis: Redis
   protected useUnlink: boolean
+  protected useTransaction: boolean
 
-  constructor ({ client, useUnlink = false }: { client: Redis, useUnlink?: boolean }) {
+  constructor ({
+    client,
+    useUnlink = false,
+    useTransaction = false
+  }: {
+    client: Redis
+    useUnlink?: boolean
+    useTransaction?: boolean
+  }) {
     if (!isRedis(client)) {
       throw new Error('RedisCacheClient needs to be used with node-redis, but the provided client does not meet the requirements.\nIf you are using ioredis, please switch to IoRedisCacheClient.')
     }
 
     this.redis = client
     this.useUnlink = useUnlink
+    this.useTransaction = useTransaction
   }
 
   async get (key: string): Promise<string | undefined> {
@@ -65,7 +75,11 @@ export class RedisCacheClient implements CacheClient {
     for (const [key, text] of keyTextMap.entries()) {
       multi.set(key, text, { PX: ttl })
     }
-    await multi.exec()
+    if (this.useTransaction) {
+      await multi.exec()
+    } else {
+      await multi.execAsPipeline()
+    }
   }
 
   async setNotExist (key: string, text: string, ttl: number): Promise<boolean> {
@@ -77,6 +91,7 @@ export class RedisCacheClient implements CacheClient {
 interface Multi {
   set: (k: string, t: string, o: { PX: number, NX?: true }) => any
   exec: () => Promise<any>
+  execAsPipeline: () => Promise<any>
 }
 
 interface Redis {

@@ -3,14 +3,24 @@ import { type CacheClient } from '../CacheClient'
 export class IoRedisCacheClient implements CacheClient {
   protected readonly redis: ioRedis
   protected useUnlink: boolean
+  protected useTransaction: boolean
 
-  constructor ({ client, useUnlink = false }: { client: ioRedis, useUnlink?: boolean }) {
+  constructor ({
+    client,
+    useUnlink = false,
+    useTransaction = false
+  }: {
+    client: ioRedis
+    useUnlink?: boolean
+    useTransaction?: boolean
+  }) {
     if (!isIoRedis(client)) {
       throw new Error('IoRedisCacheClient needs to be used with ioredis, but the provided client does not meet the requirements.\nIf you are using node-redis, please switch to RedisCacheClient.')
     }
 
     this.redis = client
     this.useUnlink = useUnlink
+    this.useTransaction = useTransaction
   }
 
   async get (key: string): Promise<string | undefined> {
@@ -60,8 +70,10 @@ export class IoRedisCacheClient implements CacheClient {
   async setMany (keyTextMap: Map<string, string>, ttl: number): Promise<void> {
     if (keyTextMap.size < 1) return
 
-    // mSet can not use with ttl, so use multi
-    const multi = this.redis.multi()
+    // mset can not use with ttl, so use multi or pipeline
+    const multi = this.useTransaction
+      ? this.redis.multi()
+      : this.redis.pipeline()
     for (const [key, text] of keyTextMap.entries()) {
       multi.set(key, text, 'PX', ttl)
     }
@@ -91,7 +103,7 @@ type ioSet2 = (
   nx: 'NX'
 ) => Promise<string | null>
 
-interface ioMulti {
+interface ioPipeline {
   set: (
     key: string,
     value: string,
@@ -107,7 +119,8 @@ interface ioRedis {
   unlink: ioDel1 & ioDel2
   del: ioDel1 & ioDel2
   set: ioSet1 & ioSet2
-  multi: () => ioMulti
+  multi: () => ioPipeline
+  pipeline: () => ioPipeline
 }
 
 function isIoRedis (r: any): r is ioRedis {

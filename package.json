@@ -2,13 +2,14 @@
   "name": "cache-bridge",
   "version": "0.0.4",
   "description": "",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist/"
-  ],
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "scripts": {
-    "build": "tsc --project tsconfig.build.json",
+    "build:tsc": "tsc --project tsconfig.build.json",
+    "build:copy": "ts-node build.script.ts",
+    "build": "npm run build:tsc",
+    "publish:beta": "cd dist && npm publish --tag beta",
+    "publish:main": "cd dist && npm publish",
     "test:ts": "mocha --require ts-node/register test/test/**/*.test.ts",
     "test": "npm run test:ts",
     "lint:ts": "tsc --noEmit",

@@ -21,7 +21,7 @@ export class Cache implements Store {
   constructor (
     cacheClient: CacheClient,
     cacheOptions: {
-      prefix: string
+      prefix?: string
       ttl: number
       stringify?: stringify
       parse?: parse
@@ -30,7 +30,7 @@ export class Cache implements Store {
     }
   ) {
     this.client = cacheClient
-    this.prefix = cacheOptions.prefix
+    this.prefix = cacheOptions.prefix ?? ''
     this.ttl = cacheOptions.ttl
     this.stringify = cacheOptions.stringify ?? defaultStringify
     this.parse = cacheOptions.parse ?? defaultParse

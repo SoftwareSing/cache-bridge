@@ -1,4 +1,4 @@
-import { type CacheClient } from '../CacheClient'
+import { type CacheClient } from '../core/CacheClient'
 
 interface LRU {
   get: (k: string) => string | undefined

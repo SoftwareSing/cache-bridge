@@ -4,10 +4,15 @@
   "description": "",
   "main": "./index.js",
   "types": "./index.d.ts",
+  "files": [
+    "./**/*.js",
+    "./**/*.ts"
+  ],
   "scripts": {
+    "build:rm": "rm -rf ./dist",
     "build:tsc": "tsc --project tsconfig.build.json",
-    "build:copy": "ts-node build.script.ts",
-    "build": "npm run build:tsc",
+    "build:copy": "mkdir -p dist && cp package.json package-lock.json README.md LICENSE dist/",
+    "build": "npm run build:rm && npm run build:tsc && npm run build:copy",
     "publish:beta": "cd dist && npm publish --tag beta",
     "publish:main": "cd dist && npm publish",
     "test:ts": "mocha --require ts-node/register test/test/**/*.test.ts",

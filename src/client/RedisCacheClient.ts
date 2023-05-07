@@ -1,4 +1,4 @@
-import { type CacheClient } from '../CacheClient'
+import { type CacheClient } from '../core/CacheClient'
 
 export class RedisCacheClient implements CacheClient {
   protected readonly redis: Redis

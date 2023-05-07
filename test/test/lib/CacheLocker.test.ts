@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
 import { expect } from 'chai'
 
-import { CacheLocker } from '../../../src/CacheLocker'
-import { Cache } from '../../../src/Cache'
+import { CacheLocker } from '../../../src/core/CacheLocker'
+import { Cache } from '../../../src/core/Cache'
 import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
 
 describe('CacheLocker', function () {

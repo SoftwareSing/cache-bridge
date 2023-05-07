@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { expect } from 'chai'
 
-import { Bridge } from '../../../src/Bridge'
-import { Cache } from '../../../src/Cache'
-import { CacheLocker } from '../../../src/CacheLocker'
+import { Bridge } from '../../../src/core/Bridge'
+import { Cache } from '../../../src/core/Cache'
+import { CacheLocker } from '../../../src/core/CacheLocker'
 import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
 import { getRandomData } from '../../test-utils/getRandomData'
 

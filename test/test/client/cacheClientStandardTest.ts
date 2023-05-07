@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
 import { expect } from 'chai'
 
-import { type CacheClient } from '../../../src/CacheClient'
-import { sleep } from '../../../src/sleep'
+import { type CacheClient } from '../../../src/core/CacheClient'
+import { sleep } from '../../../src/core/sleep'
 import { getRandomData } from '../../test-utils/getRandomData'
 import { shuffle } from '../../test-utils/shuffle'
 

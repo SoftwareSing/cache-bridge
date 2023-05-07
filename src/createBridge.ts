@@ -1,10 +1,10 @@
-import { Bridge } from './Bridge'
-import { Cache } from './Cache'
-import { type CacheClient } from './CacheClient'
-import { CacheLocker } from './CacheLocker'
-import { type parse, type stringify } from './dataConverter'
-import { type Locker } from './Locker'
-import { type Store, type get, type getMany } from './Store'
+import { Bridge } from './core/Bridge'
+import { Cache } from './core/Cache'
+import { type CacheClient } from './core/CacheClient'
+import { CacheLocker } from './core/CacheLocker'
+import { type parse, type stringify } from './core/dataConverter'
+import { type Locker } from './core/Locker'
+import { type Store, type get, type getMany } from './core/Store'
 
 /**
  * @param options
@@ -18,7 +18,7 @@ import { type Store, type get, type getMany } from './Store'
  * @param options.cacheUndefined if false, ignore undefined value on set, setMany, etc.
  * @param options.ttlForUndefined if cacheUndefined is true, set the expire time only for undefined
  */
-export function generate ({
+export function createBridge ({
   cacheClient,
   prefix = '',
   ttl,

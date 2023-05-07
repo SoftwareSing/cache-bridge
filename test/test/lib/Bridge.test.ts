@@ -1,14 +1,14 @@
-const { faker } = require('@faker-js/faker')
-const { expect } = require('chai')
+import { faker } from '@faker-js/faker'
+import { expect } from 'chai'
 
-const Bridge = require('../../../lib/Bridge')
-const Cache = require('../../../lib/Cache')
-const CacheLocker = require('../../../lib/CacheLocker')
-const LruCacheClient = require('../../test-utils/LruCacheClient')
-const { getRandomData } = require('../../test-utils/getRandomData')
+import { Bridge } from '../../../src/core/Bridge'
+import { Cache } from '../../../src/core/Cache'
+import { CacheLocker } from '../../../src/core/CacheLocker'
+import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
+import { getRandomData } from '../../test-utils/getRandomData'
 
 describe('Bridge', function () {
-  let lruClient = new LruCacheClient()
+  let lruClient = new TestLruCacheClient()
   let db = new Cache(lruClient, {
     prefix: `db${faker.lorem.word()}`,
     ttl: Infinity
@@ -26,7 +26,7 @@ describe('Bridge', function () {
   let bridge = new Bridge({ cache, locker, db })
 
   beforeEach(function () {
-    lruClient = new LruCacheClient()
+    lruClient = new TestLruCacheClient()
     db = new Cache(lruClient, {
       prefix: `db${faker.lorem.word()}`,
       ttl: Infinity

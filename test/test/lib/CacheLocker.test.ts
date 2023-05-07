@@ -1,17 +1,17 @@
-const { faker } = require('@faker-js/faker')
-const { expect } = require('chai')
+import { faker } from '@faker-js/faker'
+import { expect } from 'chai'
 
-const CacheLocker = require('../../../lib/CacheLocker')
-const Cache = require('../../../lib/Cache')
-const LruCacheClient = require('../../test-utils/LruCacheClient')
+import { CacheLocker } from '../../../src/core/CacheLocker'
+import { Cache } from '../../../src/core/Cache'
+import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
 
 describe('CacheLocker', function () {
-  let lruClient = new LruCacheClient()
+  let lruClient = new TestLruCacheClient()
   let cache = new Cache(lruClient, { prefix: '', ttl: 1 })
   let locker = new CacheLocker(cache)
 
   beforeEach(function () {
-    lruClient = new LruCacheClient()
+    lruClient = new TestLruCacheClient()
     cache = new Cache(lruClient, {
       prefix: faker.lorem.word(),
       ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })
@@ -29,7 +29,7 @@ describe('CacheLocker', function () {
     it('should return flag if success lock', async function () {
       const result = await locker.lock(id)
       expect(result).to.be.a('string')
-      expect(result.length).to.be.greaterThan(0)
+      expect(result?.length).to.be.greaterThan(0)
 
       const flagInCache = await cache.get(id)
       expect(result).to.equal(flagInCache)
@@ -52,7 +52,7 @@ describe('CacheLocker', function () {
 
     beforeEach(function () {
       idList = (new Array(faker.datatype.number({ min: 1, max: 100 })))
-        .fill()
+        .fill(undefined)
         .map(faker.datatype.uuid)
     })
 
@@ -63,7 +63,7 @@ describe('CacheLocker', function () {
 
       for (const [id, flag] of result.entries()) {
         expect(flag).to.be.a('string')
-        expect(flag.length).to.be.greaterThan(0)
+        expect(flag?.length).to.be.greaterThan(0)
 
         const flagInCache = await cache.get(id)
         expect(flag).to.equal(flagInCache)
@@ -101,25 +101,15 @@ describe('CacheLocker', function () {
     })
 
     it('should remove lock', async function () {
-      const result = await locker.unlock(id, flag)
-      expect(result).to.equal(undefined)
+      await locker.unlock(id, flag)
 
       const flagInCache = await cache.get(id)
       expect(flagInCache).to.equal(undefined)
     })
 
-    it('should not remove lock if not provide flag', async function () {
-      const result = await locker.unlock(id)
-      expect(result).to.equal(undefined)
-
-      const flagInCache = await cache.get(id)
-      expect(flagInCache).to.equal(flag)
-    })
-
     it('should not remove lock if flag not match', async function () {
       const fakeFlag = faker.datatype.uuid()
-      const result = await locker.unlock(id, fakeFlag)
-      expect(result).to.equal(undefined)
+      await locker.unlock(id, fakeFlag)
 
       const flagInCache = await cache.get(id)
       expect(flagInCache).to.equal(flag)
@@ -139,28 +129,10 @@ describe('CacheLocker', function () {
     })
 
     it('should remove all target lock', async function () {
-      const result = await locker.unlockMany(new Map(idFlagMap.entries()))
-      expect(result).to.equal(undefined)
+      await locker.unlockMany(new Map(idFlagMap.entries()))
 
       const flagInCacheMap = await cache.getMany(idFlagMap.keys())
       for (const id of idFlagMap.keys()) {
-        expect(flagInCacheMap.get(id)).to.equal(undefined)
-      }
-    })
-
-    it('should not remove lock if not provide flag', async function () {
-      const inputMap = new Map(idFlagMap.entries())
-      const noFlagId = faker.helpers.arrayElement([...inputMap.keys()])
-      inputMap.set(noFlagId, undefined)
-
-      const result = await locker.unlockMany(inputMap)
-      expect(result).to.equal(undefined)
-
-      expect(await cache.get(noFlagId)).to.equal(idFlagMap.get(noFlagId))
-
-      const flagInCacheMap = await cache.getMany(idFlagMap.keys())
-      for (const id of idFlagMap.keys()) {
-        if (id === noFlagId) continue
         expect(flagInCacheMap.get(id)).to.equal(undefined)
       }
     })
@@ -170,8 +142,7 @@ describe('CacheLocker', function () {
       const wrongFlagId = faker.helpers.arrayElement([...inputMap.keys()])
       inputMap.set(wrongFlagId, faker.datatype.uuid())
 
-      const result = await locker.unlockMany(inputMap)
-      expect(result).to.equal(undefined)
+      await locker.unlockMany(inputMap)
 
       expect(await cache.get(wrongFlagId)).to.equal(idFlagMap.get(wrongFlagId))
 

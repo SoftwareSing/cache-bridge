@@ -1,12 +1,13 @@
-const { faker } = require('@faker-js/faker')
-const { expect } = require('chai')
+import { faker } from '@faker-js/faker'
+import { expect } from 'chai'
 
-const Cache = require('../../../lib/Cache')
-const LruCacheClient = require('../../test-utils/LruCacheClient')
-const { getRandomData } = require('../../test-utils/getRandomData')
+import { Cache } from '../../../src/core/Cache'
+import { defaultStringify, defaultParse } from '../../../src/core/dataConverter'
+import { TestLruCacheClient } from '../../test-utils/TestLruCacheClient'
+import { getRandomData } from '../../test-utils/getRandomData'
 
 describe('Cache', function () {
-  let lruClient = new LruCacheClient()
+  let lruClient = new TestLruCacheClient()
   let cacheOptions = {
     prefix: '',
     ttl: 1
@@ -14,7 +15,7 @@ describe('Cache', function () {
   let cache = new Cache(lruClient, cacheOptions)
 
   beforeEach(function () {
-    lruClient = new LruCacheClient()
+    lruClient = new TestLruCacheClient()
     cacheOptions = {
       prefix: faker.lorem.word(),
       ttl: faker.datatype.number({ min: 10 * 1000, max: 100 * 1000 })
@@ -37,8 +38,8 @@ describe('Cache', function () {
     beforeEach(async function () {
       id = faker.datatype.uuid()
       data = getRandomData({ undefined: false })
-      data = cache.parse(cache.stringify(data))
-      await lruClient.set(cache.key(id), cache.stringify(data), 100 * 1000)
+      data = defaultParse(defaultStringify(data))
+      await lruClient.set(cache.key(id), defaultStringify(data), 100 * 1000)
     })
 
     it('should return data', async function () {
@@ -64,8 +65,8 @@ describe('Cache', function () {
       for (let i = 0; i < size; i += 1) {
         const id = faker.random.alphaNumeric(i + 1)
         const data = getRandomData()
-        idDataMap.set(id, cache.parse(cache.stringify(data)))
-        keyTextMap.set(cache.key(id), cache.stringify(data))
+        idDataMap.set(id, defaultParse(defaultStringify(data)))
+        keyTextMap.set(cache.key(id), defaultStringify(data))
       }
       await lruClient.setMany(keyTextMap, 100 * 1000)
     })
@@ -87,13 +88,12 @@ describe('Cache', function () {
     beforeEach(async function () {
       id = faker.datatype.uuid()
       data = getRandomData({ undefined: false })
-      data = cache.parse(cache.stringify(data))
-      await lruClient.set(cache.key(id), cache.stringify(data), 100 * 1000)
+      data = defaultParse(defaultStringify(data))
+      await lruClient.set(cache.key(id), defaultStringify(data), 100 * 1000)
     })
 
     it('should not found data after del()', async function () {
-      const result = await cache.del(id)
-      expect(result).to.equal(undefined)
+      await cache.del(id)
 
       const afterDelData = await lruClient.get(cache.key(id))
       expect(afterDelData).to.equal(undefined)
@@ -101,11 +101,10 @@ describe('Cache', function () {
 
     it('should not effect data if delete other id', async function () {
       const otherId = faker.datatype.uuid()
-      const result = await cache.del(otherId)
-      expect(result).to.equal(undefined)
+      await cache.del(otherId)
 
       const afterDelDataText = await lruClient.get(cache.key(id))
-      expect(afterDelDataText).to.equal(cache.stringify(data))
+      expect(afterDelDataText).to.equal(defaultStringify(data))
     })
   })
 
@@ -119,15 +118,14 @@ describe('Cache', function () {
       for (let i = 0; i < size; i += 1) {
         const id = faker.random.alphaNumeric(i + 1)
         const data = getRandomData()
-        idDataMap.set(id, cache.parse(cache.stringify(data)))
-        keyTextMap.set(cache.key(id), cache.stringify(data))
+        idDataMap.set(id, defaultParse(defaultStringify(data)))
+        keyTextMap.set(cache.key(id), defaultStringify(data))
       }
       await lruClient.setMany(keyTextMap, 100 * 1000)
     })
 
     it('should delete every id in list', async function () {
-      const result = await cache.delMany(idDataMap.keys())
-      expect(result).to.equal(undefined)
+      await cache.delMany(idDataMap.keys())
 
       const afterDelTextList = await lruClient.getMany([...idDataMap.keys()])
       for (const [, text] of afterDelTextList) {
@@ -146,22 +144,20 @@ describe('Cache', function () {
     })
 
     it('should set data to cache', async function () {
-      const result = await cache.set(id, data)
-      expect(result).to.equal(undefined)
+      await cache.set(id, data)
 
       const afterSetCache = await lruClient.get(cache.key(id))
-      expect(afterSetCache).to.equal(cache.stringify(data))
+      expect(afterSetCache).to.equal(defaultStringify(data))
     })
 
     it('should set data even cache already exist', async function () {
       const fakeData = getRandomData({ undefined: false, null: false, [typeof data]: false })
-      await lruClient.set(cache.key(id), cache.stringify(fakeData), 100 * 1000)
+      await lruClient.set(cache.key(id), defaultStringify(fakeData), 100 * 1000)
 
-      const result = await cache.set(id, data)
-      expect(result).to.equal(undefined)
+      await cache.set(id, data)
 
       const afterSetCache = await lruClient.get(cache.key(id))
-      expect(afterSetCache).to.equal(cache.stringify(data))
+      expect(afterSetCache).to.equal(defaultStringify(data))
     })
   })
 
@@ -179,18 +175,18 @@ describe('Cache', function () {
       expect(result).to.equal(true)
 
       const afterSetCache = await lruClient.get(cache.key(id))
-      expect(afterSetCache).to.equal(cache.stringify(data))
+      expect(afterSetCache).to.equal(defaultStringify(data))
     })
 
     it('should not set data if cache already exist', async function () {
       const fakeData = getRandomData({ undefined: false, null: false, [typeof data]: false })
-      await lruClient.set(cache.key(id), cache.stringify(fakeData), 100 * 1000)
+      await lruClient.set(cache.key(id), defaultStringify(fakeData), 100 * 1000)
 
       const result = await cache.setNotExist(id, data)
       expect(result).to.equal(false)
 
       const afterSetCache = await lruClient.get(cache.key(id))
-      expect(afterSetCache).to.equal(cache.stringify(fakeData))
+      expect(afterSetCache).to.equal(defaultStringify(fakeData))
     })
   })
 
@@ -203,13 +199,12 @@ describe('Cache', function () {
       for (let i = 0; i < size; i += 1) {
         const id = faker.random.alphaNumeric(i + 1)
         const data = getRandomData()
-        idDataMap.set(id, cache.parse(cache.stringify(data)))
+        idDataMap.set(id, defaultParse(defaultStringify(data)))
       }
     })
 
     it('should set every data to cache', async function () {
-      const result = await cache.setMany(idDataMap.entries())
-      expect(result).to.equal(undefined)
+      await cache.setMany(idDataMap.entries())
 
       const keyList = [...idDataMap.keys()].map((id) => cache.key(id))
       const afterSetCacheList = await lruClient.getMany(keyList)
@@ -219,7 +214,7 @@ describe('Cache', function () {
         expect(afterSetCacheMap.has(key)).to.equal(true)
 
         const cacheText = afterSetCacheMap.get(key)
-        expect(cacheText).to.equal(cache.stringify(data))
+        expect(cacheText).to.equal(defaultStringify(data))
       }
     })
   })
